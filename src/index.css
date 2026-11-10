@@ -1,56 +1,191 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
 
-:root {
-  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-  color: #24212a;
-  background: #f5f2eb;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ------------------------------------------------------------------
+   Design tokens
+   Single source of truth for colour, type and easing.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
 
-  --paper: #f5f2eb;
-  --paper-raised: #ebe7de;
-  --ink: #24212a;
-  --muted: #69656b;
-  --line: #d7d1c8;
-  --purple: #6740d9;
-  --purple-deep: #2a203a;
-  --lime: #d5ef73;
-  --serif: 'Instrument Serif', Georgia, serif;
-  --mono: 'DM Mono', Consolas, monospace;
-  --content-width: 1280px;
-  --page-gutter: clamp(24px, 6vw, 88px);
+  --color-surface: #0f172a;
+  --color-surface-2: #111c30;
+  --color-surface-3: #17233a;
+
+  --color-ink: #e2e8f0;
+  --color-ink-2: #94a3b8;
+  --color-ink-3: #64748b;
+
+  --color-accent: #5eead4;
+  --color-line: rgb(148 163 184 / 0.15);
+  --color-line-strong: rgb(148 163 184 / 0.3);
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 32px; }
-body { min-width: 320px; margin: 0; }
-body, button, a { font-family: 'Space Grotesk', 'Segoe UI', sans-serif; }
-a { color: inherit; }
-a:focus-visible { outline: 3px solid var(--purple); outline-offset: 4px; }
-::selection { color: #fff; background: var(--purple); }
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: rgb(148 163 184 / 0.3) var(--color-surface);
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  body {
+    @apply bg-surface font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply text-balance;
+  }
+
+  p {
+    @apply text-pretty;
+  }
+
+  ::selection {
+    background-color: rgb(94 234 212 / 0.22);
+    color: #f8fafc;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Custom scrollbar keeps the navy palette intact in Chromium. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.25);
+    border: 3px solid var(--color-surface);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184 / 0.4);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f1ede5;
-    background: #211d27;
-    --paper: #211d27;
-    --paper-raised: #302a36;
-    --ink: #f1ede5;
-    --muted: #bdb5c2;
-    --line: #49424e;
-    --purple: #b09aff;
-    --purple-deep: #18141c;
-    --lime: #d5ef73;
+@layer components {
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-200%);
+    transition: transform 0.2s var(--ease-soft);
+    @apply rounded-md border border-line bg-surface-2 px-4 py-2 text-sm font-medium text-ink;
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* Reveal-on-scroll. Only armed once `.js` is present, so content can
+     never be trapped in a hidden state if JS or the observer fails. */
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition:
+      opacity 0.62s var(--ease-soft),
+      transform 0.62s var(--ease-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .js .reveal[data-visible='true'] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Experience timeline */
+  .timeline {
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65rem;
+    bottom: 0.65rem;
+    width: 1px;
+    background: var(--color-line-strong);
+    opacity: 0.6;
+  }
+  .timeline > li {
+    position: relative;
+    padding-left: 1.75rem;
+  }
+  .timeline > li::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0.62rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background-color: #334155;
+    box-shadow: 0 0 0 4px var(--color-surface);
+    transition: background-color 0.3s var(--ease-soft);
+  }
+  .timeline > li:hover::before {
+    background-color: var(--color-accent);
+  }
+
+  /* Mobile drawer */
+  .drawer-panel {
+    animation: drawer-in 0.34s var(--ease-soft) both;
+  }
+  .drawer-backdrop {
+    animation: fade-in 0.24s ease-out both;
+  }
+
+  @keyframes drawer-in {
+    from {
+      opacity: 0;
+      transform: translateX(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }
