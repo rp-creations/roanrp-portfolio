@@ -94,8 +94,8 @@ export const about = {
 export const experiences = [
   {
     id: 'casamie',
-    role: 'Full-Stack Web Development & Software QA',
-    project: 'CASMIE — Casa Miani Management System',
+    role: 'Full-Stack Web Development',
+    project: 'Casa Miani Management Portal',
     context: 'Academic capstone',
     period: '2026-Present',
     description:
@@ -110,8 +110,24 @@ export const experiences = [
     technologies: ['PHP', 'JavaScript', 'MySQL/MariaDB', 'Tailwind CSS', 'PWA', 'AI Provider API'],
   },
   {
+    id: 'rp-creations',
+    role: 'Independent Web Developer',
+    project: 'RP Creations',
+    context: 'Paid project work',
+    period: '2024-Present',
+    description:
+      'Ran small paid web projects under the RPCreations name — some built from scratch, others repaired and extended from existing code. Each brief carried its own requirements, deadline, and handover, from booking flows to records-management systems.',
+    highlights: [
+      'Scoped and delivered small builds end to end: requirements, Figma UI, implementation, and handover.',
+      'Built full-stack features with PHP, MySQL, and HTML/CSS/JavaScript.',
+      'Repaired and extended existing codebases, isolating faults without breaking surrounding behavior.',
+      'Adapted delivery across different briefs rather than repeating a single template.',
+    ],
+    technologies: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS', 'Figma'],
+  },
+  {
     id: 'barbershop',
-    role: 'Full-Stack Web Development | Web Application',
+    role: 'Locally Hosted Web Application',
     project: 'Barbershop Management System',
     context: 'Collaborative project',
     period: null,
@@ -151,6 +167,26 @@ export const experiences = [
   },
 ]
 
+/**
+ * Awards &amp; recognition, shown as a compact block beneath the Experience
+ * timeline. Leave the array empty to hide the block entirely — nothing
+ * renders until there is real content, so no placeholder is ever shown.
+ *
+ * Only list things you can back up if asked: a placement, a distinction,
+ * a judged result. Attending a seminar is not an award.
+ *
+ * Shape: { id, title, issuer, year, note? }
+ * Example:
+ *   {
+ *     id: 'capstone-2026',
+ *     title: 'Best Capstone Project',
+ *     issuer: 'CBSAA IT Department',
+ *     year: '2026',
+ *     note: 'Selected from 12 competing teams',
+ *   },
+ */
+export const awards = []
+
 export const projects = [
   {
     index: '01',
@@ -173,7 +209,7 @@ export const projects = [
     imageAlt: 'CASMIE management system dashboard',
     links: {
       github: null, // TODO(replace): repository URL
-      demo: 'casmie.cbsuait2026.com', // TODO(replace): live demo URL
+      demo: 'https://casmie.cbsuait2026.com',
     },
   },
   {
