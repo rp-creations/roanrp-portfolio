@@ -1,14 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="14" fill="#0f172a" />
-  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="#5eead4" stroke-opacity="0.35" />
+  <rect width="64" height="64" rx="14" fill="#5eead4" />
   <text
     x="32"
-    y="45"
-    fill="#5eead4"
+    y="46"
+    fill="#0f172a"
     font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"
-    font-size="38"
+    font-size="40"
     font-weight="700"
-    letter-spacing="-2"
     text-anchor="middle"
-  >B</text>
+  >R</text>
 </svg>
