@@ -185,7 +185,26 @@ export const experiences = [
  *     note: 'Selected from 12 competing teams',
  *   },
  */
-export const awards = []
+export const awards = [
+  {
+    id: 'outstanding-computer-programming',
+    title: 'Outstanding in Computer Programming',
+  },
+  {
+    id: 'outstanding-database-management',
+    title: 'Outstanding in Database Management',
+  },
+  {
+    id: 'outstanding-data-structures',
+    title: 'Outstanding in Data Structure & Algorithm',
+  },
+  {
+    id: 'deans-lister',
+    title: "Dean's Lister",
+    year: '2024–2025',
+    note: 'Four consecutive terms',
+  },
+]
 
 export const projects = [
   {
