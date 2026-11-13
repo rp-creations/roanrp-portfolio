@@ -13,7 +13,7 @@ export default function ProjectCard({ project, delay = 0 }) {
     description,
     highlights,
     technologies,
-    image,
+    images,
     imageAlt,
     links,
   } = project
@@ -29,7 +29,7 @@ export default function ProjectCard({ project, delay = 0 }) {
         className="rounded-lg border border-transparent p-2 transition-colors duration-300 ease-soft group-hover:border-line group-hover:bg-white/[0.025] sm:p-3"
       >
         <article aria-labelledby={`project-${slug}-title`}>
-          <ProjectMedia image={image} imageAlt={imageAlt} />
+          <ProjectMedia images={images} imageAlt={imageAlt} />
 
           <div className="px-1.5 pb-1.5 pt-5 sm:px-2.5">
             <div className="flex items-start justify-between gap-4">

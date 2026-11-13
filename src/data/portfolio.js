@@ -1,46 +1,34 @@
-/* ==================================================================
-   PORTFOLIO CONTENT — the only file you need to edit.
 
-  REPLACE BEFORE PUBLISHING
-   [ ] projects[].links  → real repository / demo URLs (null = hidden)
-   [ ] projects[].image  → automatic; drop casamie.webp, barbershop.webp
-                           or java-gui.webp into src/assets/projects/
-   ================================================================== */
-
-/**
- * Screenshots are picked up automatically by filename, so adding one is a
- * pure asset drop — no component or data edits required.
- *   src/assets/projects/casamie.webp      → project slug 'casamie'
- */
 const projectImages = import.meta.glob('../assets/projects/*.{png,jpg,jpeg,webp,avif}', {
   eager: true,
   query: '?url',
   import: 'default',
 })
 
-function imageFor(slug) {
+function imagesFor(slug) {
   const aliases = {
     casamie: ['casamie', 'casmie', 'casmie-project1-screenshot'],
     barbershop: ['barbershop', 'lantin', 'lantin-project2-screenshot'],
     'java-gui': ['java-gui'],
   }
 
-  const match = Object.entries(projectImages).find(([path]) => {
-    const file = path.split('/').pop() ?? ''
-    const base = file.replace(/\.[^.]+$/, '').toLowerCase()
-    return (aliases[slug] ?? [slug]).some((alias) => {
-      const normalizedAlias = alias.toLowerCase().replace(/[^a-z0-9]+/g, '')
-      const normalizedBase = base.replace(/[^a-z0-9]+/g, '')
-      return normalizedBase === normalizedAlias || normalizedBase.includes(normalizedAlias)
+  return Object.entries(projectImages)
+    .filter(([path]) => {
+      const file = path.split('/').pop() ?? ''
+      const base = file.replace(/\.[^.]+$/, '').toLowerCase()
+      return (aliases[slug] ?? [slug]).some((alias) => {
+        const normalizedAlias = alias.toLowerCase().replace(/[^a-z0-9]+/g, '')
+        const normalizedBase = base.replace(/[^a-z0-9]+/g, '')
+        return normalizedBase === normalizedAlias || normalizedBase.includes(normalizedAlias)
+      })
     })
-  })
-
-  return match ? match[1] : null
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+    .map(([, url]) => url)
 }
 
 export const profile = {
   name: 'Roan Pantalla',
-  role: 'IT Support & Systems | Full-Stack Developer',
+  role: 'IT Student & Web Developer',
   intro:
     'I build, test, and support practical digital solutions across software, systems, and creative media.',
   location: 'Philippines',
@@ -73,15 +61,15 @@ export const about = {
   index: 1,
   label: 'About',
   paragraphs: [
-    "I'm Roan Pantalla, an Information Technology student who builds and improves practical digital solutions. I turn project requirements into usable applications, then test the workflows and refine the details that make them dependable.",
-    'My experience spans full-stack development, software QA, AI provider API integration, technical troubleshooting, and system administration fundamentals. I work with PHP, MySQL, JavaScript, and React, and I approach unfamiliar problems by investigating, testing, and documenting what I find.',
-    'I also bring a creative side through video editing and hands-on work with Adobe Photoshop and Illustrator. I value clear communication, reliable implementation, and work that solves a real need.',
+    "I'm a BS Information Technology student at Central Bicol State University of Agriculture – Sipocot, graduating in 2027. I build full-stack web applications, handling both the database and the user interface. My projects include CASMIE, a multi-role management system for an orphanage, and a booking app for a photography business.",
+    "I work mainly with PHP, MySQL, JavaScript, and React. Beyond development, I have experience in software QA and basic troubleshooting. When I hit an unfamiliar problem, I investigate, test, and document what I find so the next person can follow it.",
+    "Outside of code, I edit video and design in Adobe Photoshop and Illustrator. I'm looking for an internship or OJT role where I can keep building real systems and learn from experienced developers.",
   ],
   focus: [
+    'Full-stack web development',
+    'Software QA & troubleshooting',
     'Technical support & systems',
-    'Software QA & AI integration',
-    'Full-stack development',
-    'Mobile app development',
+    'Third-party LLM API integration',
   ],
 }
 
@@ -111,17 +99,17 @@ export const experiences = [
   },
   {
     id: 'rp-creations',
-    role: 'Independent Web Developer',
+    role: 'Freelance Software Development',
     project: 'RP Creations',
     context: 'Paid project work',
     period: '2024-Present',
     description:
       'Ran small paid web projects under the RPCreations name — some built from scratch, others repaired and extended from existing code. Each brief carried its own requirements, deadline, and handover, from booking flows to records-management systems.',
     highlights: [
-      'Scoped and delivered small builds end to end: requirements, Figma UI, implementation, and handover.',
+      'Delivered project-based software development and technical assistance whithin 6+ client projects.',
       'Built full-stack features with PHP, MySQL, and HTML/CSS/JavaScript.',
-      'Repaired and extended existing codebases, isolating faults without breaking surrounding behavior.',
-      'Adapted delivery across different briefs rather than repeating a single template.',
+      'Developed application features, modules, and functionality based on client requirements.',
+      'Collaborated with clients throughout development to refine requirements and deliver working solutions.',
     ],
     technologies: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS', 'Figma'],
   },
@@ -167,36 +155,22 @@ export const experiences = [
   },
 ]
 
-/**
- * Awards &amp; recognition, shown as a compact block beneath the Experience
- * timeline. Leave the array empty to hide the block entirely — nothing
- * renders until there is real content, so no placeholder is ever shown.
- *
- * Only list things you can back up if asked: a placement, a distinction,
- * a judged result. Attending a seminar is not an award.
- *
- * Shape: { id, title, issuer, year, note? }
- * Example:
- *   {
- *     id: 'capstone-2026',
- *     title: 'Best Capstone Project',
- *     issuer: 'CBSAA IT Department',
- *     year: '2026',
- *     note: 'Selected from 12 competing teams',
- *   },
- */
+
 export const awards = [
   {
     id: 'outstanding-computer-programming',
     title: 'Outstanding in Computer Programming',
+    year: '2023–2024',
   },
   {
     id: 'outstanding-database-management',
     title: 'Outstanding in Database Management',
+    year: '2024–2025',
   },
   {
     id: 'outstanding-data-structures',
     title: 'Outstanding in Data Structure & Algorithm',
+    year: '2024–2025',
   },
   {
     id: 'deans-lister',
@@ -214,17 +188,17 @@ export const projects = [
     subtitle: 'Casa Miani Management System',
     context: 'Academic capstone',
     description:
-      'Built and validated core workflows for child, staff, donation, and financial records, including role-based access, audit logging, PWA support, and AI provider API integration.',
+      'A web-based orphanage management system built as a Progressive Web App. It runs on a 29-table MySQL database and supports three user roles (Director, Social Worker, and Religious), each with its own access. Built with PHP, JavaScript, Tailwind CSS, and MySQL.',
     highlights: [
       'Role-based access control.',
       'Database-driven management.',
       'Progressive Web App functionality.',
       'Audit logging and security-focused features.',
       'Structured child and staff management.',
-      'AI provider API integration and workflow testing.',
+      'AI integration and workflow testing.',
     ],
     technologies: ['PHP', 'JavaScript', 'MySQL/MariaDB', 'Tailwind CSS', 'AI Provider API'],
-    image: imageFor('casamie'),
+    images: imagesFor('casamie'),
     imageAlt: 'CASMIE management system dashboard',
     links: {
       github: null, // TODO(replace): repository URL
@@ -238,7 +212,7 @@ export const projects = [
     subtitle: 'Appointment Scheduling Platform',
     context: 'Collaborative project · full-stack responsibilities',
     description:
-      'A web-based appointment scheduling and management platform designed to replace manual booking processes and reduce scheduling conflicts.',
+      'A management system for a barbershop, built as the sole full-stack developer on a two-person team. Built with PHP and MySQL.',
     highlights: [
       'Online appointment scheduling.',
       'Booking management.',
@@ -246,7 +220,7 @@ export const projects = [
       'Database integration.',
     ],
     technologies: ['PHP', 'MySQL', 'JavaScript', 'HTML', 'CSS'],
-    image: imageFor('barbershop'),
+    images: imagesFor('barbershop'),
     imageAlt: 'Barbershop appointment scheduling interface',
     links: {
       github: 'https://github.com/rp-creations/lantin-barbershop', // TODO(replace): repository URL
@@ -260,10 +234,10 @@ export const projects = [
     subtitle: 'Desktop Application',
     context: 'Independent project',
     description:
-      'A Java desktop application developed independently, demonstrating GUI development, application logic, and structured programming.',
+      'A desktop appointment booking app for a photography business, with booking categories such as weddings and birthdays. Built as a Java desktop GUI, developed by me in a two-person team.',
     highlights: [],
     technologies: ['Java', 'Swing'],
-    image: imageFor('java-gui'),
+    images: imagesFor('java-gui'),
     imageAlt: 'Java desktop application interface',
     links: {
       github: null, // TODO(replace): repository URL

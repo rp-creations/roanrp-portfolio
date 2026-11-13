@@ -167,6 +167,40 @@
       opacity: 1;
     }
   }
+
+  /* Project media carousel */
+  @keyframes kenburns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.08);
+    }
+  }
+  @keyframes scan {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.9;
+    }
+    85% {
+      opacity: 0.9;
+    }
+    100% {
+      transform: translateX(300%);
+      opacity: 0;
+    }
+  }
+  @keyframes carousel-progress {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
