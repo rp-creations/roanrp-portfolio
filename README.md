@@ -76,9 +76,10 @@ src/
   data/         portfolio.js — all content
   assets/       project screenshots
   App.jsx  main.jsx  index.css
-projects/
-  cb-photography/   Java Swing booking app (source only, not part of the site build)
 ```
+
+The CB Photography Java project lives in its own repository:
+[rp-creations/cb-photography](https://github.com/rp-creations/cb-photography).
 
 ## Design notes
 

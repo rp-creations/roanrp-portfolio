@@ -303,7 +303,7 @@ export const projects = [
     images: imagesFor('java-gui'),
     imageAlt: 'CB Photography desktop application interface',
     links: {
-      github: 'https://github.com/rp-creations/roanrp-portfolio/tree/main/projects/cb-photography',
+      github: 'https://github.com/rp-creations/cb-photography',
       demo: null,
     },
   },
