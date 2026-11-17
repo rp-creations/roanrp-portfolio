@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
  * section active when the page is scrolled to the bottom.
  */
 export function useActiveSection(ids) {
-  const [activeId, setActiveId] = useState(ids[0] ?? null)
+  const [activeId, setActiveId] = useState(null)
   const key = ids.join('|')
 
   useEffect(() => {

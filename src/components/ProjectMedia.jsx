@@ -4,19 +4,45 @@
  * Renders one or many screenshots in a single frame with a crossfade + Ken
  * Burns transition, an auto-advance timer, manual prev/next controls, dots,
  * and a progress bar. Falls back to the neutral wireframe when no image exists.
+ *
+ * Autoplay is deliberately conservative: it never starts for reduced-motion
+ * users, it pauses on hover, keyboard focus, off-screen cards, hidden tabs,
+ * and via an explicit pause button. The dots are 24px targets and the arrow
+ * buttons are 44px, so the controls stay usable on touch.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
 
-const AUTOPLAY_MS = 4800
+const AUTOPLAY_MS = 5600
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false)
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduced(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  return reduced
+}
 
 export default function ProjectMedia({ images = [], imageAlt }) {
-  const slides = Array.isArray(images) ? images.filter(Boolean) : []
+  // A Set removes duplicate URLs if the same screenshot is imported twice.
+  const slides = Array.from(new Set((Array.isArray(images) ? images : []).filter(Boolean)))
   const count = slides.length
 
+  const reducedMotion = usePrefersReducedMotion()
   const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const timerRef = useRef(null)
+  const [userPaused, setUserPaused] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const [visible, setVisible] = useState(true)
+  const [pageVisible, setPageVisible] = useState(true)
+  const regionRef = useRef(null)
 
   const go = useCallback(
     (next) => {
@@ -29,28 +55,56 @@ export default function ProjectMedia({ images = [], imageAlt }) {
   const next = useCallback(() => go(index + 1), [go, index])
   const prev = useCallback(() => go(index - 1), [go, index])
 
-  useEffect(() => {
-    if (count <= 1 || paused) return
-    timerRef.current = setInterval(() => {
-      setIndex((i) => (i + 1) % count)
-    }, AUTOPLAY_MS)
-    return () => clearInterval(timerRef.current)
-  }, [count, paused])
+  const playing =
+    count > 1 && !userPaused && !hovered && !focused && visible && pageVisible && !reducedMotion
 
-  // Reset index if slides change.
+  // Restart the timer whenever the slide changes so manual navigation gets a
+  // full interval instead of advancing again a moment later.
+  useEffect(() => {
+    if (!playing) return
+    const timer = setInterval(() => setIndex((i) => (i + 1) % count), AUTOPLAY_MS)
+    return () => clearInterval(timer)
+  }, [playing, count, index])
+
+  // Reset if the slide list changes.
   useEffect(() => {
     setIndex(0)
   }, [count])
 
-  // Keyboard support.
-  const onKeyDown = (e) => {
+  // Pause when the card scrolls out of view.
+  useEffect(() => {
     if (count <= 1) return
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault()
+    const node = regionRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') return
+
+    const observer = new IntersectionObserver((entries) => setVisible(entries[0].isIntersecting), {
+      threshold: 0.2,
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [count])
+
+  // Pause when the browser tab is hidden.
+  useEffect(() => {
+    const update = () => setPageVisible(!document.hidden)
+    document.addEventListener('visibilitychange', update)
+    return () => document.removeEventListener('visibilitychange', update)
+  }, [])
+
+  const onKeyDown = (event) => {
+    if (count <= 1) return
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
       prev()
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault()
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault()
       next()
+    } else if (event.key === 'Home') {
+      event.preventDefault()
+      go(0)
+    } else if (event.key === 'End') {
+      event.preventDefault()
+      go(count - 1)
     }
   }
 
@@ -125,9 +179,14 @@ export default function ProjectMedia({ images = [], imageAlt }) {
 
   return (
     <div
+      ref={regionRef}
       className="relative overflow-hidden rounded-md border border-line bg-surface-2"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false)
+      }}
       onKeyDown={onKeyDown}
       tabIndex={0}
       role="region"
@@ -142,8 +201,8 @@ export default function ProjectMedia({ images = [], imageAlt }) {
               key={`${src}-${i}`}
               className={`absolute inset-0 transition-all duration-700 ease-soft ${
                 active
-                  ? 'opacity-100 scale-100 blur-0 brightness-100'
-                  : 'opacity-0 scale-110 blur-md brightness-75'
+                  ? 'scale-100 opacity-100 blur-0 brightness-100'
+                  : 'scale-110 opacity-0 blur-md brightness-75'
               }`}
               aria-hidden={!active}
             >
@@ -155,7 +214,9 @@ export default function ProjectMedia({ images = [], imageAlt }) {
                 loading={i === 0 ? 'eager' : 'lazy'}
                 decoding="async"
                 className={`h-full w-full object-cover ${
-                  active ? 'animate-[kenburns_4.8s_ease-out_forwards]' : ''
+                  active && playing && !reducedMotion
+                    ? 'animate-[kenburns_5.6s_ease-out_forwards]'
+                    : ''
                 }`}
               />
             </div>
@@ -165,7 +226,7 @@ export default function ProjectMedia({ images = [], imageAlt }) {
         {/* Scan sweep on slide change */}
         <div
           key={`scan-${index}`}
-          className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-accent/25 to-transparent mix-blend-screen animate-[scan_0.9s_ease-out_forwards]"
+          className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-[scan_0.9s_ease-out_forwards] bg-gradient-to-r from-transparent via-accent/25 to-transparent mix-blend-screen"
           aria-hidden="true"
         />
 
@@ -174,62 +235,77 @@ export default function ProjectMedia({ images = [], imageAlt }) {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(2,6,23,0.55)_100%)]"
         />
+
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-inset ring-white/5"
+        />
       </div>
 
-      {/* Agentic auto-pilot badge */}
-      <div className="absolute left-2 top-2 z-10 flex items-center gap-1.5 rounded-full border border-accent/30 bg-surface/70 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-accent backdrop-blur">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-        </span>
-        Agent · Auto
-      </div>
+      {/* Pause / play. Replaces the autoplay status badge with something useful. */}
+      {!reducedMotion && (
+        <button
+          type="button"
+          onClick={() => setUserPaused((paused) => !paused)}
+          aria-label={userPaused ? 'Play screenshot slideshow' : 'Pause screenshot slideshow'}
+          className="group/pause absolute left-1 top-1 z-10 flex h-11 w-11 items-center justify-center rounded-full"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-surface/75 text-ink-2 backdrop-blur transition-colors duration-300 ease-soft group-hover/pause:border-accent/60 group-hover/pause:text-accent">
+            {userPaused ? (
+              <Play size={14} aria-hidden="true" />
+            ) : (
+              <Pause size={14} aria-hidden="true" />
+            )}
+          </span>
+        </button>
+      )}
 
       {/* Prev / Next */}
       <button
         type="button"
         onClick={prev}
         aria-label="Previous screenshot"
-        className="absolute left-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur transition-all duration-300 ease-soft opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:border-accent/60 hover:text-accent focus-visible:opacity-100"
+        className="absolute left-1 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 opacity-100 backdrop-blur transition-all duration-300 ease-soft hover:border-accent/60 hover:text-accent focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
       >
-        <ChevronLeft size={16} aria-hidden="true" />
+        <ChevronLeft size={18} aria-hidden="true" />
       </button>
       <button
         type="button"
         onClick={next}
         aria-label="Next screenshot"
-        className="absolute right-2 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 backdrop-blur transition-all duration-300 ease-soft opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:border-accent/60 hover:text-accent focus-visible:opacity-100"
+        className="absolute right-1 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface/70 text-ink-2 opacity-100 backdrop-blur transition-all duration-300 ease-soft hover:border-accent/60 hover:text-accent focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
       >
-        <ChevronRight size={16} aria-hidden="true" />
+        <ChevronRight size={18} aria-hidden="true" />
       </button>
 
-      {/* Dots */}
-      <div
-        className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-line bg-surface/60 px-2 py-1 backdrop-blur"
-        role="tablist"
-        aria-label="Screenshot selector"
-      >
+      {/* Dots: 24px hit areas around a 6px visual mark. */}
+      <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center rounded-full border border-line bg-surface/60 p-0.5 backdrop-blur">
         {slides.map((_, i) => (
           <button
             key={i}
             type="button"
-            role="tab"
-            aria-selected={i === index}
-            aria-label={`Show screenshot ${i + 1} of ${count}`}
             onClick={() => go(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ease-soft ${
-              i === index ? 'w-5 bg-accent' : 'w-1.5 bg-ink-3/70 hover:bg-ink-2'
-            }`}
-          />
+            aria-label={`Show screenshot ${i + 1} of ${count}`}
+            aria-current={i === index ? 'true' : undefined}
+            className="group/dot flex h-6 w-6 items-center justify-center"
+          >
+            <span
+              aria-hidden="true"
+              className={`block h-1.5 rounded-full transition-all duration-300 ease-soft ${
+                i === index ? 'w-4 bg-accent' : 'w-1.5 bg-ink-3/70 group-hover/dot:bg-ink-2'
+              }`}
+            />
+          </button>
         ))}
       </div>
 
       {/* Progress bar */}
-      {!paused && (
+      {playing && (
         <div
           key={`progress-${index}`}
-          className="absolute bottom-0 left-0 z-10 h-0.5 bg-accent/80 animate-[carousel-progress_4.8s_linear_forwards]"
-          style={{ width: '0%' }}
+          aria-hidden="true"
+          className="absolute bottom-0 left-0 z-10 h-0.5 bg-accent/80"
+          style={{ animation: `carousel-progress ${AUTOPLAY_MS}ms linear forwards` }}
         />
       )}
 
@@ -238,10 +314,9 @@ export default function ProjectMedia({ images = [], imageAlt }) {
         {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
       </div>
 
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-inset ring-white/5"
-      />
+      <p className="sr-only" aria-live={playing ? 'off' : 'polite'}>
+        Screenshot {index + 1} of {count}
+      </p>
     </div>
   )
 }

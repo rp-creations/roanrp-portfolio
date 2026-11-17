@@ -23,7 +23,7 @@ export default function Navigation({ activeId, variant = 'sidebar', onNavigate }
                   <span
                     aria-hidden="true"
                     className={`w-5 text-[11px] tabular-nums transition-colors duration-300 ${
-                      isActive ? 'text-accent' : 'text-ink-3'
+                      isActive ? 'text-accent' : 'text-ink-2/80'
                     }`}
                   >
                     {String(index + 1).padStart(2, '0')}
@@ -67,7 +67,7 @@ export default function Navigation({ activeId, variant = 'sidebar', onNavigate }
                 <span
                   aria-hidden="true"
                   className={`text-[11px] tabular-nums transition-colors duration-300 ${
-                    isActive ? 'text-accent' : 'text-ink-3 group-hover:text-ink-2'
+                    isActive ? 'text-accent' : 'text-ink-2/80 group-hover:text-ink-2'
                   }`}
                 >
                   {String(index + 1).padStart(2, '0')}

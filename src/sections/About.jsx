@@ -24,7 +24,7 @@ export default function About() {
         </div>
 
         <div className="mt-9 border-t border-line pt-6">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-3">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-2">
             Current focus
           </h3>
           <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-3">
