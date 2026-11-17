@@ -50,7 +50,7 @@ export const navItems = [
 export const hero = {
   availability: 'Open to internships',
   location: 'Philippines',
-  headline: 'I build database-backed web systems that hold up in daily use.',
+  headline: 'I turn real-world requirements into reliable digital solutions.',
   description:
     'Full-stack work in PHP, MySQL, and React — including a 29-table management portal with role-based access, audit logging, and AI integration. I also handle QA, troubleshooting, and technical support.',
   primaryCta: { label: 'View Projects', href: '#projects' },
