@@ -29,8 +29,7 @@ function imagesFor(slug) {
 export const profile = {
   name: 'Roan Pantalla',
   role: 'Full-Stack Developer & IT Student',
-  intro:
-    'I build, test, and support practical web systems — from database design to deployment and handover.',
+  intro: 'I build practical web applications that solve real-world problems.',
   location: 'Philippines',
   availability: 'Open to internships',
   email: 'roan.rpantalla@gmail.com',
@@ -50,7 +49,8 @@ export const navItems = [
 export const hero = {
   availability: 'Open to internships',
   location: 'Philippines',
-  headline: 'I turn real-world requirements into reliable digital solutions.',
+  headline:
+    'I focus on developing functional, user-friendly systems through frontend and backend development.',
   description:
     'Full-stack work in PHP, MySQL, and React — including a 29-table management portal with role-based access, audit logging, and AI integration. I also handle QA, troubleshooting, and technical support.',
   primaryCta: { label: 'View Projects', href: '#projects' },
