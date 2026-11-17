@@ -8,7 +8,7 @@ The filename (without extension) must match the project `slug` in
 | ------------------ | ------------------------------------------ |
 | `casamie.webp`     | CASMIE — Casa Miani child-care portal      |
 | `barbershop.webp`  | Lantin Barbershop Management System        |
-| `java-gui.webp`    | Photography Booking App                    |
+| `java-gui.webp`    | CB Photography — Booking & Receipting      |
 
 Supported extensions: `.png`, `.jpg`, `.jpeg`, `.webp`, `.avif`.
 

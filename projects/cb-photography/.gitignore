@@ -1,0 +1,15 @@
+# Client receipts and generated history contain personal data.
+Receipt_*.txt
+Receipt_History.txt
+
+# Compiled output
+*.class
+*.jar
+out/
+bin/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

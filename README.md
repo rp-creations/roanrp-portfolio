@@ -76,6 +76,8 @@ src/
   data/         portfolio.js — all content
   assets/       project screenshots
   App.jsx  main.jsx  index.css
+projects/
+  cb-photography/   Java Swing booking app (source only, not part of the site build)
 ```
 
 ## Design notes

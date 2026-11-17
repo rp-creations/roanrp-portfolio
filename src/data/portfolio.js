@@ -145,13 +145,17 @@ export const experiences = [
   {
     id: 'java-gui',
     role: 'Java Application Development',
-    project: 'Photography Booking Desktop App',
+    project: 'CB Photography Booking System',
     context: 'Coursework project',
     period: null,
     description:
-      'A desktop appointment booking application for a photography business, built in Java to practise GUI construction, event handling, and structured program design outside of the browser.',
-    highlights: [],
-    technologies: ['Java', 'Swing'],
+      'A desktop booking and receipting system for a photography business, built with Java Swing. Clients move through profile, venue, event category, and service selection before payment and an itemized receipt.',
+    highlights: [
+      'Modelled six event categories with 42 priced services using an abstract Category class and subclasses.',
+      'Built a multi-step flow with editable profile, venue, category, and service stages.',
+      'Generated timestamped receipts with a persistent history log and automatic totals.',
+    ],
+    technologies: ['Java', 'Swing', 'OOP', 'File I/O'],
   },
 ]
 
@@ -283,17 +287,23 @@ export const projects = [
   {
     index: '03',
     slug: 'java-gui',
-    title: 'Photography Booking App',
-    subtitle: 'Java Swing desktop application',
-    context: 'Coursework · collaborative',
+    title: 'CB Photography',
+    subtitle: 'Booking & receipting system',
+    context: 'Coursework · two-person team',
     description:
-      'A desktop appointment booking app for a photography business, with booking categories such as weddings and birthdays. Built with Java Swing as a two-person coursework project.',
-    highlights: [],
-    technologies: ['Java', 'Swing'],
+      'A desktop booking application for CB Creatives Photography. It guides a client from profile and venue details through event category and service selection, then records a payment method and produces an itemized receipt. Six event types — wedding, birthday, corporate, baptism, creative, and product — each offer seven priced services, with editable stages and automatic totals. Built with Java Swing and an abstract category model.',
+    highlights: [
+      'Six event categories with 42 priced services.',
+      'Guided flow with editable profile, venue, category, and service stages.',
+      'Automatic totals and itemized receipt generation.',
+      'Timestamped receipt history saved to plain text.',
+      'GCash, PayPal, and bank transfer payment selection.',
+    ],
+    technologies: ['Java', 'Swing', 'OOP', 'File I/O'],
     images: imagesFor('java-gui'),
-    imageAlt: 'Java desktop application interface',
+    imageAlt: 'CB Photography desktop application interface',
     links: {
-      github: null,
+      github: 'https://github.com/rp-creations/roanrp-portfolio/tree/main/projects/cb-photography',
       demo: null,
     },
   },
